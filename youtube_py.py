@@ -33,8 +33,8 @@ def fetch_channel_data_all():
             with st.spinner(text='Fetching channel info...'):
                     channelData = get_channel_data(channel_id= channel_id)
                     playlist_details = get_playlists_details(channel_id=channel_id)
-                    st.session_state.yt_channel_data = channelData
                     st.session_state.yt_playlist_data = playlist_details
+                    st.session_state.yt_channel_data = channelData
                     
                     st.toast("Channel info fetched successfully")
         else:
@@ -81,50 +81,52 @@ with tab1:
                 with col2:
                     if st.button("Close", key= "channel_reset", type= "primary"):
                         st.session_state.yt_channel_data = None
-                #st.write("---") # divider
+                c1,c2 = st.columns([8,2])
+                with c1:
+                    # show buttons in single row
+                    col1, col2 = st.columns([2,4])
+                    with col1:
+                        st.write("**Channel Id:**")
+                    with col2:
+                        st.write(channel_id)
 
-                # show buttons in single row
-                col1, col2 = st.columns([2,4])
-                with col1:
-                    st.write("**Channel Id:**")
-                with col2:
-                    st.write(channel_id)
+                    # show buttons in single row
+                    col1, col2 = st.columns([2,4])
+                    with col1:
+                        st.write("**Channel Name:**")
+                    with col2:
+                        st.write(st.session_state.yt_channel_data["channel_name"])
 
-                # show buttons in single row
-                col1, col2 = st.columns([2,4])
-                with col1:
-                    st.write("**Channel Name:**")
-                with col2:
-                    st.write(st.session_state.yt_channel_data["channel_name"])
+                    # show buttons in single row
+                    col1, col2 = st.columns([2,4])
+                    with col1:
+                        st.write("**Channel Description:**")
+                    with col2:
+                        st.write(st.session_state.yt_channel_data["channel_desc"])
 
-                # show buttons in single row
-                col1, col2 = st.columns([2,4])
-                with col1:
-                    st.write("**Channel Description:**")
-                with col2:
-                    st.write(st.session_state.yt_channel_data["channel_desc"])
+                    # show buttons in single row
+                    col1, col2 = st.columns([2,4])
+                    with col1:
+                        st.write("**Published at:**")
+                    with col2:
+                        st.write(st.session_state.yt_channel_data["channel_pAt"])
 
-                # show buttons in single row
-                col1, col2 = st.columns([2,4])
-                with col1:
-                    st.write("**Published at:**")
-                with col2:
-                    st.write(st.session_state.yt_channel_data["channel_pAt"])
-
-                
-                # show buttons in single row
-                col1, col2 = st.columns([2,4])
-                with col1:
-                    st.write("**Video Count:**")
-                with col2:
-                    st.write(st.session_state.yt_channel_data["channel_videoC"])
-                
-                # show buttons in single row
-                col1, col2 = st.columns([2,4])
-                with col1:
-                    st.write("**Subscriber Count:**")
-                with col2:
-                    st.write(st.session_state.yt_channel_data["channel_sub"])
+                    
+                    # show buttons in single row
+                    col1, col2 = st.columns([2,4])
+                    with col1:
+                        st.write("**Video Count:**")
+                    with col2:
+                        st.write(st.session_state.yt_channel_data["channel_videoC"])
+                    
+                    # show buttons in single row
+                    col1, col2 = st.columns([2,4])
+                    with col1:
+                        st.write("**Subscriber Count:**")
+                    with col2:
+                        st.write(st.session_state.yt_channel_data["channel_sub"])
+                with c2:
+                    st.image(st.session_state.yt_channel_data["thumbnail_url"])
 
                 
                 # display playlist data
@@ -137,7 +139,7 @@ with tab1:
                             save_comments_in_database(vid_list["comments"])
                     # Save DB start
                     try:
-                        col1, col2 = st.columns([2,4])
+                        col1, col2 = st.columns([2,6])
                         with col1:
                             st.write("**Playlist:**")
                         with col2:
@@ -147,20 +149,20 @@ with tab1:
 
                         if(plist):
                             # show buttons in single row
-                            col1, col2 = st.columns([2,4])
+                            col1, col2 = st.columns([2,6])
                             with col1:
                                 st.write("**Playlist Id:**")
                             with col2:
                                 st.write(plist["playlist_Id"])
 
                             # show buttons in single row
-                            col1, col2 = st.columns([2,4])
+                            col1, col2 = st.columns([2,6])
                             with col1:
                                 st.write("**Title:**")
                             with col2:
                                 st.write(plist["title"])
 
-                            col1, col2 = st.columns([2,4])
+                            col1, col2 = st.columns([2,6])
                             with col1:
                                 st.write("**Video List:**")
                             with col2:
@@ -168,37 +170,37 @@ with tab1:
                                 video = st.selectbox(label= "Select Video", options= plist["video_data"], format_func= lambda x: x["Title"], label_visibility= "collapsed", placeholder="Select Playlist", index=0)
                         
                             if(video):
-                                col1, col2 = st.columns([2,4])
+                                col1, col2 = st.columns([2,6])
                                 with col1:
                                     st.write("**Video Id:**")
                                 with col2:
                                     st.write(video["Video_Id"])
 
-                                col1, col2 = st.columns([2,4])
+                                col1, col2 = st.columns([2,6])
                                 with col1:
                                     st.write("**Video Title:**")
                                 with col2:
                                     st.write(video["Title"])
 
-                                col1, col2 = st.columns([2,4])
+                                col1, col2 = st.columns([2,6])
                                 with col1:
                                     st.write("**Video Description:**")
                                 with col2:
                                     st.write(video["Description"])
 
-                                col1, col2 = st.columns([2,4])
+                                col1, col2 = st.columns([2,6])
                                 with col1:
                                     st.write("**Total Views:**")
                                 with col2:
                                     st.write(video["Views"])
                                 
-                                col1, col2 = st.columns([2,4])
+                                col1, col2 = st.columns([2,6])
                                 with col1:
                                     st.write("**Total Likes:**")
                                 with col2:
                                     st.write(video["Favourite_Count"])
 
-                                col1, col2 = st.columns([2,4])
+                                col1, col2 = st.columns([2,6])
                                 with col1:
                                     st.write("**Comments:**")
                                 with col2:
@@ -312,4 +314,3 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
-

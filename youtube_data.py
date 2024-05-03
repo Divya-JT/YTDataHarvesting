@@ -58,7 +58,7 @@ def create_database_and_table():
     cursor = client.cursor()
     
     # Create "Channel" TABLE 
-    query = """create table IF NOT EXISTS Channel(channel_id varchar(255) PRIMARY KEY,channel_name varchar(255) ,channel_description text,channel_publishedAt timestamp,playlists_id varchar(255),channel_sub int,channel_videoC int,viewCount varchar(255))"""
+    query = """create table IF NOT EXISTS Channel(channel_id varchar(255) PRIMARY KEY,channel_name varchar(255) ,channel_description text,channel_publishedAt timestamp,playlists_id varchar(255),channel_sub int,channel_videoC int,viewCount varchar(255), thumbnail_url varchar(256))"""
     cursor.execute(query)
 
     # Create "playlist" table
@@ -92,7 +92,8 @@ def get_channel_data(channel_id):
         "channel__pId":response['items'][0]['contentDetails']['relatedPlaylists']['uploads'],
         "channel_sub":response['items'][0]['statistics']['subscriberCount'],
         "channel_videoC":response['items'][0]['statistics']['videoCount'],
-        "channel_views":response['items'][0]['statistics']['viewCount']
+        "channel_views":response['items'][0]['statistics']['viewCount'],
+        "thumbnail_url":response['items'][0]['snippet']['thumbnails']['default']['url']
     }
     return data
 
@@ -101,7 +102,7 @@ def save_channel_data(channel_details):
     try:
         client = getSqlClient()
         cursor = client.cursor()
-        query = """INSERT INTO channel(channel_id,channel_name,channel_description,channel_publishedAt,playlists_id,channel_sub,channel_videoC,viewCount) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"""
+        query = """INSERT INTO channel(channel_id,channel_name,channel_description,channel_publishedAt,playlists_id,channel_sub,channel_videoC,viewCount, thumbnail_url) VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         print(query)
 
         # Parse the timestamp string
@@ -116,7 +117,8 @@ def save_channel_data(channel_details):
             channel_details["channel__pId"],
             channel_details["channel_sub"],
             channel_details["channel_videoC"],
-            channel_details["channel_views"]
+            channel_details["channel_views"],
+            channel_details["thumbnail_url"]
         )
         print(values)
         cursor.execute(query, values)
