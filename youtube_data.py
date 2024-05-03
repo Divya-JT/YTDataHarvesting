@@ -58,7 +58,7 @@ def create_database_and_table():
     cursor = client.cursor()
     
     # Create "Channel" TABLE 
-    query = """create table IF NOT EXISTS Channel(channel_id varchar(255) PRIMARY KEY,channel_name varchar(255) ,channel_description text,channel_publishedAt timestamp,playlists_id varchar(255),channel_sub int,channel_videoC int)"""
+    query = """create table IF NOT EXISTS Channel(channel_id varchar(255) PRIMARY KEY,channel_name varchar(255) ,channel_description text,channel_publishedAt timestamp,playlists_id varchar(255),channel_sub int,channel_videoC int,viewCount varchar(255))"""
     cursor.execute(query)
 
     # Create "playlist" table
@@ -91,7 +91,8 @@ def get_channel_data(channel_id):
         "channel_pAt":response['items'][0]['snippet']['publishedAt'],
         "channel__pId":response['items'][0]['contentDetails']['relatedPlaylists']['uploads'],
         "channel_sub":response['items'][0]['statistics']['subscriberCount'],
-        "channel_videoC":response['items'][0]['statistics']['videoCount']
+        "channel_videoC":response['items'][0]['statistics']['videoCount'],
+        "channel_views":response['items'][0]['statistics']['viewCount']
     }
     return data
 
@@ -100,7 +101,7 @@ def save_channel_data(channel_details):
     try:
         client = getSqlClient()
         cursor = client.cursor()
-        query = """INSERT INTO channel(channel_id,channel_name,channel_description,channel_publishedAt,playlists_id,channel_sub,channel_videoC) VALUES(%s,%s,%s,%s,%s,%s,%s)"""
+        query = """INSERT INTO channel(channel_id,channel_name,channel_description,channel_publishedAt,playlists_id,channel_sub,channel_videoC,viewCount) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"""
         print(query)
 
         # Parse the timestamp string
@@ -114,7 +115,8 @@ def save_channel_data(channel_details):
             formatted_timestamp,
             channel_details["channel__pId"],
             channel_details["channel_sub"],
-            channel_details["channel_videoC"]
+            channel_details["channel_videoC"],
+            channel_details["channel_views"]
         )
         print(values)
         cursor.execute(query, values)
@@ -234,7 +236,7 @@ def get_video_details(video_ids):
                     Thumbnail = item ['snippet']['thumbnails']['default']['url'],
                     Description = item.get('description'),
                     Published_Date = item ['snippet']['publishedAt'],
-                    Duration = item ['contentDetails']['duration'],
+                    Duration = iso8601_to_seconds(item ['contentDetails']['duration']),
                     Views = item ['statistics']['viewCount'],
                     Comments = item ['statistics']['commentCount'],
                     Favourite_Count = item ['statistics']['favoriteCount'],
@@ -375,4 +377,16 @@ def execue_query(query):
         return df
     except Exception as error:
         print("Query error=>", error)
+
+
+def iso8601_to_seconds(duration):
+    try:
+        sec = pd.Timedelta(duration).seconds
+
+        print("iso8601_to_seconds duration : ", duration+" Seconds : ", sec)
+        return sec
+    except Exception as err:
+        print("iso8601_to_seconds Error : ", err)
+        return duration
+
 

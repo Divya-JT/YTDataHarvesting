@@ -228,16 +228,16 @@ with tab2:
     st.title("Select Query")
     
     options = ["Select Query", 
-                "What are the names of all the videos and their corresponding channels?",
-                "Which channels have the most number of videos, and how many videos do they have?",
-                "What are the top 10 most viewed videos and their respective channels?",
-                "How many comments were made on each video, and what are their corresponding video names?",
-                "Which videos have the highest number of likes, and what are their corresponding channel names?",
-                "What is the total number of likes and dislikes for each video, and what are their corresponding video names?",
-                "What is the total number of views for each channel, and what are their corresponding channel names?",
-                "What are the names of all the channels that have published videos in the year 2022?",
-                "What is the average duration of all videos in each channel, and what are their corresponding channel names?",
-                "Which videos have the highest number of comments, and what are their corresponding channel names?"]
+                "What are the names of all the videos and their corresponding channels?", #1
+                "Which channels have the most number of videos, and how many videos do they have?", #2
+                "What are the top 10 most viewed videos and their respective channels?", #3
+                "How many comments were made on each video, and what are their corresponding video names?", #4
+                "Which videos have the highest number of likes, and what are their corresponding channel names?", #5
+                "What is the total number of likes and dislikes for each video, and what are their corresponding video names?",#6
+                "What is the total number of views for each channel, and what are their corresponding channel names?", #7
+                "What are the names of all the channels that have published videos in the year 2022?", #8
+                "What is the average duration of all videos in each channel, and what are their corresponding channel names?",#9
+                "Which videos have the highest number of comments, and what are their corresponding channel names?"] #10
     query = st.selectbox(label= "Select Query", options= options, label_visibility= "visible", placeholder="Select Playlist", index=0)
 
     if(query):
@@ -245,40 +245,42 @@ with tab2:
         if index != 0:
             st.write("**Result**")
             result = None
-            if(index == 1):
+            if(index == 1): #What are the names of all the videos and their corresponding channels?
                 query = "SELECT title, channel_name FROM video;"
                 result = execue_query(query)
-            elif(index == 2):
+            elif(index == 2): #Which channels have the most number of videos, and how many videos do they have?
                 query = "SELECT channel_name, channel_videoC FROM youtube_data.channel WHERE channel_videoC = (SELECT MAX(channel_videoC) from youtube_data.channel);"
                 result = execue_query(query)
-            elif(index == 3):
-                query = "SELECT channel_name, title, views FROM youtube_data.video ORDER BY views DESC LIMIT 10;"
+            elif(index == 3): #What are the top 10 most viewed videos and their respective channels?
+                query = "SELECT channel_name, title, views FROM youtube_data.video ORDER BY CAST(views AS unsigned) DESC LIMIT 10;"
                 result = execue_query(query)
-            elif(index == 4):
+            elif(index == 4): #How many comments were made on each video, and what are their corresponding video names?
                 query = "SELECT title, comments FROM youtube_data.video;"
                 result = execue_query(query)
-            elif(index == 5):
-                query = "SELECT channel_name, favourite_count FROM youtube_data.video ORDER BY views DESC LIMIT 10;"
+            elif(index == 5): #Which videos have the highest number of likes, and what are their corresponding channel names?
+                query = "SELECT channel_name, like_count FROM youtube_data.video ORDER BY CAST(like_count AS unsigned) DESC LIMIT 10;"
                 result = execue_query(query)
-            elif(index == 6):
-                query = "SELECT channel_name, title, views FROM youtube_data.video ORDER BY views DESC LIMIT 10;"
+            elif(index == 6): #What is the total number of likes and dislikes for each video, and what are their corresponding video names?
+                query = "SELECT title, like_count, dislike_count FROM youtube_data.video;"
                 result = execue_query(query)
-            elif(index == 7):
-                query = "SELECT channel_name, title, views FROM youtube_data.video ORDER BY views DESC LIMIT 10;"
+            elif(index == 7): #What is the total number of views for each channel, and what are their corresponding channel names?
+                query = "SELECT channel_name, viewCount FROM youtube_data.channel;"
                 result = execue_query(query)
-            elif(index == 8):
-                query = "SELECT channel_name, title, views FROM youtube_data.video ORDER BY views DESC LIMIT 10;"
+            elif(index == 8): # What are the names of all the channels that have published videos in the year 2022?"
+                query = "SELECT DISTINCT channel_name FROM video WHERE published_date LIKE '2022-%';"
                 result = execue_query(query)
-            elif(index == 9):
-                query = "SELECT channel_name, title, views FROM youtube_data.video ORDER BY views DESC LIMIT 10;"
+            elif(index == 9): #What is the average duration of all videos in each channel, and what are their corresponding channel names?
+                query = """SELECT channel_name, AVG(duration) AS avg_duration_seconds FROM youtube_data.video GROUP BY channel_name;"""
                 result = execue_query(query)
-            elif (index == 10):
-                query = """SELECT video.title as "Video title", COUNT(youtube_data.comment.comment_id) AS "comment_count" FROM youtube_data.video LEFT JOIN youtube_data.comment ON youtube_data.video.video_id = youtube_data.comment.video_id GROUP BY youtube_data.video.video_id, youtube_data.video.title;"""
+            elif (index == 10): #Which videos have the highest number of comments, and what are their corresponding channel names?
+                query = """SELECT video.title as "Video title", COUNT(youtube_data.comment.comment_id) AS "comment_count" FROM youtube_data.video LEFT JOIN youtube_data.comment ON youtube_data.video.video_id = youtube_data.comment.video_id GROUP BY youtube_data.video.video_id, youtube_data.video.title ORDER BY comment_count DESC;"""
                 result = execue_query(query)
-            if(result.all):
+
+            try:    
                 pd.DataFrame(result)
                 st.write(result)
-
+            except Exception as error:
+                print("Query Error:", error)
 
 
     
