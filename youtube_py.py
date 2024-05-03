@@ -1,14 +1,8 @@
 import streamlit as st
-import sys
 import youtube_data
 from youtube_data import *
 import streamlit_nested_layout
 import pandas as pd
-
-
-#st.session_state.get_channel_btn_clicked = False
-#if 'get_channel_btn_clicked' not in st.session_state:
-#    st.session_state.get_channel_btn_clicked = False
 
 
 # Create DB and Table is not exist
@@ -46,9 +40,6 @@ tab1, tab2 = st.tabs(["Search", "Query"])
 
 with tab1:
     st.title('youtube harvesting')
-
-        
-    
 
     with st.form(key="form1", border= True, clear_on_submit=True):
         channel_id = st.text_input('Enter a channel id:', value= "")

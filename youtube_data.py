@@ -220,35 +220,38 @@ def get_video_ids(playlist_Id):
 
 def get_video_details(video_ids):
     video_data = []
-    #for video_id in video_ids:
-    request = youtube.videos().list(
-        part = "snippet,contentDetails,statistics",
-        id = video_ids
-    )
-    response = request.execute()
+    try:
+        #for video_id in video_ids:
+        request = youtube.videos().list(
+            part = "snippet,contentDetails,statistics",
+            id = video_ids
+        )
+        response = request.execute()
 
-    for item in response['items']:    
-        print("Video:", item)                                        
-        
-        data = dict(Channel_Name = item ['snippet']['channelTitle'],
-                    Channel_Id = item ['snippet'][ 'channelId'],
-                    Video_Id = item ['id'],
-                    Title = item ['snippet']['title'],
-                    Tags = item.get('tags'),                                   # SOME VIDEOS DONT HAVE THIS VALUE,SO TO AVOID GETTING ERROR WE USE .GET FUNCTION
-                    Thumbnail = item ['snippet']['thumbnails']['default']['url'],
-                    Description = item.get('description'),
-                    Published_Date = item ['snippet']['publishedAt'],
-                    Duration = iso8601_to_seconds(item ['contentDetails']['duration']),
-                    Views = item ['statistics']['viewCount'],
-                    Comments = item ['statistics']['commentCount'],
-                    Favourite_Count = item ['statistics']['favoriteCount'],
-                    Like_Count = item ['statistics']['likeCount'],
-                    Dislike_Count = '0',
-                    Definition = item ['contentDetails']['definition'],
-                    Caption_Status = item ['contentDetails']['caption'],
-                    comments = get_comment_data(video_id=item['id'])
-                    )
-        video_data.append(data)
+        for item in response['items']:    
+            print("Video:", item)                                        
+            
+            data = dict(Channel_Name = item ['snippet']['channelTitle'],
+                        Channel_Id = item ['snippet'][ 'channelId'],
+                        Video_Id = item ['id'],
+                        Title = item ['snippet']['title'],
+                        Tags = item.get('tags'),                                   # SOME VIDEOS DONT HAVE THIS VALUE,SO TO AVOID GETTING ERROR WE USE .GET FUNCTION
+                        Thumbnail = item ['snippet']['thumbnails']['default']['url'],
+                        Description = item.get('description'),
+                        Published_Date = item ['snippet']['publishedAt'],
+                        Duration = iso8601_to_seconds(item ['contentDetails']['duration']),
+                        Views = item ['statistics']['viewCount'],
+                        Comments = item ['statistics']['commentCount'],
+                        Favourite_Count = item ['statistics']['favoriteCount'],
+                        Like_Count = item ['statistics']['likeCount'],
+                        Dislike_Count = '0',
+                        Definition = item ['contentDetails']['definition'],
+                        Caption_Status = item ['contentDetails']['caption'],
+                        comments = get_comment_data(video_id=item['id'])
+                        )
+            video_data.append(data)
+    except Exception as error:
+        print("get_video_details Error=>", error)
 
     return video_data
 
@@ -257,6 +260,7 @@ def get_comment_info(video_ids):
     comment_data = []
     try:
         for video_id in video_ids:
+            print("get_comment_info video_id : ", video_id)
             request = youtube.commentThreads().list(
                 part = "snippet",
                 videoId = video_id,                
