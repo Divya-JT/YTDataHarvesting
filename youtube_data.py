@@ -373,12 +373,7 @@ def execue_query(query):
         client = getSqlClient()
         df = pd.read_sql_query(query, client)
 
-        #cursor=client.cursor()
         
-        #cursor.execute(query)
-        # get all records
-        #records = cursor.fetchall()
-        #cursor.close()
         client.close()
         return df
     except Exception as error:

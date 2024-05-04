@@ -72,6 +72,8 @@ with tab1:
                 with col2:
                     if st.button("Close", key= "channel_reset", type= "primary"):
                         st.session_state.yt_channel_data = None
+
+
                 c1,c2 = st.columns([8,2])
                 with c1:
                     # show buttons in single row
@@ -128,7 +130,8 @@ with tab1:
                         save_video_list_in_batabase(ply_list["video_data"])
                         for vid_list in ply_list["video_data"]:
                             save_comments_in_database(vid_list["comments"])
-                    # Save DB start
+                    # Save DB end
+
                     try:
                         col1, col2 = st.columns([2,6])
                         with col1:
@@ -220,7 +223,7 @@ with tab1:
 with tab2:
     st.title("Select Query")
     
-    options = ["Select Query", 
+    options = ["None", 
                 "What are the names of all the videos and their corresponding channels?", #1
                 "Which channels have the most number of videos, and how many videos do they have?", #2
                 "What are the top 10 most viewed videos and their respective channels?", #3
@@ -231,7 +234,7 @@ with tab2:
                 "What are the names of all the channels that have published videos in the year 2022?", #8
                 "What is the average duration of all videos in each channel, and what are their corresponding channel names?",#9
                 "Which videos have the highest number of comments, and what are their corresponding channel names?"] #10
-    query = st.selectbox(label= "Select Query", options= options, label_visibility= "visible", placeholder="Select Playlist", index=0)
+    query = st.selectbox(label= "Select Query", options= options, label_visibility= "collapsed", placeholder="Select Playlist", index=0)
 
     if(query):
         index = options.index(query)
@@ -280,28 +283,3 @@ with tab2:
 
 
 
-st.markdown(
-    """
-    <style>
-    button[kind="primary"] {
-        background: none!important;
-        border: none;
-        padding: 0!important;
-        color: black !important;
-        text-decoration: none;
-        cursor: pointer;
-        border: none !important;
-    }
-    button[kind="primary"]:hover {
-        text-decoration: none;
-        color: black !important;
-    }
-    button[kind="primary"]:focus {
-        outline: none !important;
-        box-shadow: none !important;
-        color: black !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
