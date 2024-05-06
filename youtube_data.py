@@ -304,7 +304,7 @@ def get_comment_data(video_id):
     return comment_data
 
 # Save Video in database
-def save_video_list_in_batabase(video_list):
+def save_video_list_in_database(video_list):
     try:
         client = getSqlClient()
         cursor=client.cursor()

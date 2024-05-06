@@ -23,16 +23,16 @@ if 'yt_playlist_data' not in st.session_state:
     st.session_state.yt_playlist_data = None
 
 def fetch_channel_data_all():
-        if(channel_id):
-            with st.spinner(text='Fetching channel info...'):
-                    channelData = get_channel_data(channel_id= channel_id)
-                    playlist_details = get_playlists_details(channel_id=channel_id)
-                    st.session_state.yt_playlist_data = playlist_details
-                    st.session_state.yt_channel_data = channelData
-                    
-                    st.toast("Channel info fetched successfully")
-        else:
-            st.warning(body="Please enter Channel Id...")
+    if(channel_id):
+        with st.spinner(text='Fetching channel info...'):
+                channelData = get_channel_data(channel_id= channel_id)
+                playlist_details = get_playlists_details(channel_id=channel_id)
+                st.session_state.yt_playlist_data = playlist_details
+                st.session_state.yt_channel_data = channelData
+                
+                st.toast("Channel info fetched successfully")
+    else:
+        st.warning(body="Please enter Channel Id...")
 
 
 
@@ -68,9 +68,9 @@ with tab1:
             with channelPlaceHolder.container(border=True):
                 col1, col2 = st.columns([4,1])
                 with col1:
-                    st.write("<h4><u>Channel Information</u></h4>", unsafe_allow_html=True)
+                    st.write("<h4><u>Channel Information</u></h4>", unsafe_allow_html=True)       
                 with col2:
-                    if st.button("Close", key= "channel_reset", type= "primary"):
+                    if st.button("Close", key= "channel_reset"):
                         st.session_state.yt_channel_data = None
 
 
@@ -127,7 +127,7 @@ with tab1:
                     # Save DB start
                     save_playlist_into_database(st.session_state.yt_playlist_data)
                     for ply_list in st.session_state.yt_playlist_data:
-                        save_video_list_in_batabase(ply_list["video_data"])
+                        save_video_list_in_database(ply_list["video_data"])
                         for vid_list in ply_list["video_data"]:
                             save_comments_in_database(vid_list["comments"])
                     # Save DB end
