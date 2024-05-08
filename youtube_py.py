@@ -24,6 +24,9 @@ if 'yt_playlist_data' not in st.session_state:
 
 def fetch_channel_data_all():
     if(channel_id):
+        st.session_state.yt_playlist_data = None
+        st.session_state.yt_channel_data = None
+                
         with st.spinner(text='Fetching channel info...'):
                 channelData = get_channel_data(channel_id= channel_id)
                 playlist_details = get_playlists_details(channel_id=channel_id)
@@ -127,7 +130,7 @@ with tab1:
                     # Save DB start
                     save_playlist_into_database(st.session_state.yt_playlist_data)
                     for ply_list in st.session_state.yt_playlist_data:
-                        save_video_list_in_database(ply_list["video_data"])
+                        save_video_list_in_database(ply_list["video_data"], st.session_state.yt_channel_data["channel_Id"])
                         for vid_list in ply_list["video_data"]:
                             save_comments_in_database(vid_list["comments"])
                     # Save DB end
@@ -222,6 +225,8 @@ with tab1:
 
 with tab2:
     st.title("Select Query")
+    st.session_state.yt_playlist_data = None
+    st.session_state.yt_channel_data = None
     
     options = ["None", 
                 "What are the names of all the videos and their corresponding channels?", #1
@@ -269,7 +274,7 @@ with tab2:
                 query = """SELECT channel_name, AVG(duration) AS avg_duration_seconds FROM youtube_data.video GROUP BY channel_name;"""
                 result = execue_query(query)
             elif (index == 10): #Which videos have the highest number of comments, and what are their corresponding channel names?
-                query = """SELECT video.title as "Video title", COUNT(youtube_data.comment.comment_id) AS "comment_count" FROM youtube_data.video LEFT JOIN youtube_data.comment ON youtube_data.video.video_id = youtube_data.comment.video_id GROUP BY youtube_data.video.video_id, youtube_data.video.title ORDER BY comment_count DESC;"""
+                query = "SELECT channel_name, comments FROM youtube_data.video ORDER BY CAST(comments AS unsigned) DESC LIMIT 10;"
                 result = execue_query(query)
 
             try:    

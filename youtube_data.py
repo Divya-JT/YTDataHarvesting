@@ -304,38 +304,39 @@ def get_comment_data(video_id):
     return comment_data
 
 # Save Video in database
-def save_video_list_in_database(video_list):
+def save_video_list_in_database(video_list, channel_id):
     try:
         client = getSqlClient()
         cursor=client.cursor()
         for video in video_list:
-            query = """insert into video(channel_name,channel_id,video_id,title,tags,thumbnail,description, published_date, duration,views,comments,favourite_count,definition,caption_status, like_count, dislike_count) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-            print("Video : ", video)
+            if(channel_id == video["Channel_Id"]):
+                query = "insert into youtube_data.video(channel_name,channel_id,video_id,title,tags,thumbnail,description, published_date, duration,views,comments,favourite_count,definition,caption_status, like_count, dislike_count) values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                print("Video query : ", query)
 
-            timestamp_obj = datetime.strptime(video["Published_Date"], '%Y-%m-%dT%H:%M:%SZ')
-            formatted_timestamp = timestamp_obj.strftime('%Y-%m-%d %H:%M:%S')
-            print("formatted_timestamp : " , formatted_timestamp)
+                timestamp_obj = datetime.strptime(video["Published_Date"], '%Y-%m-%dT%H:%M:%SZ')
+                formatted_timestamp = timestamp_obj.strftime('%Y-%m-%d %H:%M:%S')
+                print("formatted_timestamp : " , formatted_timestamp)
 
-            values =(video["Channel_Name"],
-                    video["Channel_Id"],
-                    video["Video_Id"],
-                    video["Title"],
-                    video["Tags"],
-                    video["Thumbnail"],
-                    video["Description"],
-                    formatted_timestamp,
-                    video["Duration"],
-                    video["Views"],
-                    video["Comments"],
-                    video["Favourite_Count"],
-                    video["Definition"],
-                    video["Caption_Status"],
-                    video["Like_Count"],
-                    video["Dislike_Count"]
-                    )
-            print(values)
-            cursor.execute(query, values)
-            client.commit()
+                values =(video["Channel_Name"],
+                        video["Channel_Id"],
+                        video["Video_Id"],
+                        video["Title"],
+                        video["Tags"],
+                        video["Thumbnail"],
+                        video["Description"],
+                        formatted_timestamp,
+                        video["Duration"],
+                        video["Views"],
+                        video["Comments"],
+                        video["Favourite_Count"],
+                        video["Definition"],
+                        video["Caption_Status"],
+                        video["Like_Count"],
+                        video["Dislike_Count"]
+                        )
+                print(values)
+                cursor.execute(query, values)
+                client.commit()
         client.close()
     except Exception as error:
         print("video insetion error=>", error)
